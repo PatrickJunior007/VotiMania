@@ -1,0 +1,183 @@
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  StatusBar,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
+  Alert,
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { auth } from "../../firebase";
+
+const SignIn = (props) => {
+  //State for Input field
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        props.navigation.replace("HomeScreen");
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  //Alert for signup
+  const createTwoButtonAlert = () => {
+    Alert.alert(
+      "Welcome to VotiMania",
+      "You have successfully created an account",
+      [
+        {
+          text: "Okay",
+          style: "destructive",
+        },
+      ]
+    );
+  };
+
+  //Firebase SignUp
+  const handleSignUp = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredentials) => {
+        const user = userCredentials.user;
+        //console.log(user.email);
+        createTwoButtonAlert();
+      })
+      .catch((error) => alert(error.message));
+  };
+
+  const handleLogin = () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredentials) => {
+        const user = userCredentials.user;
+        Alert.alert("Welcome back to VotiMania", "Welcome " + user.email, [
+          {
+            text: "Okay",
+            style: "destructive",
+          },
+        ]);
+      })
+      .catch((error) => alert(error.message));
+  };
+
+  return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar backgroundColor="white" barStyle="dark-content" />
+
+        <ScrollView contentContainerStyle={{flex: 1,  alignItems: "center", justifyContent: "center"}} style={{ width: "100%", }}>
+          
+          <View style={styles.imgBg}>
+            <Image
+              style={styles.profileImage}
+              source={require("../../assets/VotiMania.png")}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              style={styles.input}
+            />
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              style={styles.input}
+              secureTextEntry
+            />
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={handleLogin} style={styles.button}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleSignUp}
+              style={[styles.button, styles.buttonOutline]}
+            >
+              <Text style={styles.buttonOutlineText}>Register</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
+  );
+};
+
+export default SignIn;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  imgBg: {
+    height: 100,
+    width: 145,
+    marginVertical: 20,
+  },
+  profileImage: {
+    width: "100%",
+    height: "100%",
+  },
+  inputContainer: {
+    width: "80%",
+  },
+  input: {
+    backgroundColor: "white",
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 10,
+    marginTop: 10,
+    fontFamily: "Poppins-Regular",
+  },
+  buttonContainer: {
+    width: "60%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 40,
+  },
+  button: {
+    backgroundColor: "#0782F9",
+    width: "100%",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  buttonOutline: {
+    backgroundColor: "white",
+    marginTop: 10,
+    borderWidth: 2,
+    borderColor: "#0782F9",
+  },
+  buttonOutlineText: {
+    padding: 15,
+    color: "#0782F9",
+    fontFamily: "Poppins-Bold",
+  },
+  buttonText: {
+    color: "white",
+    padding: 15,
+    fontFamily: "Poppins-Bold",
+  },
+});
