@@ -13,21 +13,62 @@ import {
   ImageBackground,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert
 } from "react-native";
 import React, { useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-} from "firebase/auth";
-import { auth } from "../../firebase"
+import { doc, setDoc, collection, getDoc, updateDoc  } from "firebase/firestore"; 
+import { db } from "../../firebase";
+import { auth } from "../../firebase";
+
+
 
 //Import Component
 import Header from "../../components/Header";
 
-const CreateVote = () => {
+const CreateVote = (props) => {
   const [voteTitle, setvoteTitle] = useState("");
   const [voteMessage, setvoteMessage] = useState("");
+  
+  const userID= auth.currentUser?.uid;
+  const userEmail= auth.currentUser?.email;
+  const addVote = async() => {
+    
+
+    await setDoc(doc(db, "users_vote", voteTitle),{
+      userId: userID,
+      user_email: userEmail,
+      vote_title: voteTitle,
+      vote_message: voteMessage,
+      like: 0,
+      unlike: 0
+    }).then(()=>{
+
+      Alert.alert(
+        "Create Vote",
+        "You've successfully created your vote",
+        [
+          {
+            text: "See Vote",
+            onPress: () => {
+              props.navigation.navigate("SeeVote");
+            },
+          },
+          {
+            text: "Okay",
+          },
+        ]
+      );
+
+      setvoteTitle("");
+      setvoteMessage("");
+
+      
+
+        
+
+    }).catch(error => alert(error.message))
+  }
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <SafeAreaView style={styles.container}>
@@ -46,7 +87,7 @@ const CreateVote = () => {
               />
               <Text style={styles.textStyle}>Vote Content</Text>
               <TextInput
-                placeholder="What's your vote all about?"
+                placeholder="What's your vote all about?" 
                 value={voteMessage}
                 onChangeText={(text) => setvoteMessage(text)}
                 style={styles.input}
@@ -55,7 +96,7 @@ const CreateVote = () => {
 
             <View style={styles.buttonMain}>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => {}} style={styles.button}>
+                <TouchableOpacity onPress={addVote} style={styles.button}>
                   <Text style={styles.buttonText}>Submit</Text>
                 </TouchableOpacity>
               </View>

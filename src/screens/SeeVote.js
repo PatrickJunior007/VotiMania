@@ -11,46 +11,113 @@ import {
   Button,
   TouchableOpacity,
   ImageBackground,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 //Components
 import Header from "../../components/Header";
 import image from "../../assets/images/large.jpg";
 
+import {
+  doc,
+  setDoc,
+  collection,
+  getDoc,
+  updateDoc,
+  getDocs,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "../../firebase";
+import { auth } from "../../firebase";
+
 const SeeVote = () => {
-  // // const [thumbUp, setthumbUp] = useState("thumb-up-off-alt");
-  // // const [thumbDown, setthumbDown] = useState("thumb-down-off-alt")
+  const [data, setData] = useState([]);
 
-  // // const handleClickedUp = () =>{
-  // //   //State Handling
-  // //   setthumbUp("thumb-up-alt");
-  // //   setthumbDown("thumb-down-off-alt");
-  // // }
+  //Prototype
+  
 
-  // // const handleClickedDown = () =>{
-  // //   //State Handling
-  // //   setthumbDown("thumb-down-alt");
-  // //   setthumbUp("thumb-up-off-alt");
-  // // }
+  useEffect(() => {
+    // const fetchData = async () => {
+    //   let list = [];
+    //   try {
+    //     const querySnapshot = await getDocs(collection(db, "users_vote"));
+    //     querySnapshot.forEach((doc) => {
+    //       // doc.data() is never undefined for query doc snapshots
+    //       //console.log(doc.id, " => ", doc.data());
+    //       list.push({ id: doc.id, ...doc.data() });
 
-  // const [thumbUp, setthumbUp] = useState(false);
-  // const [thumbDown, setthumbDown] = useState(false);
+    //     });
+    //     setData(list);
+    //   } catch (error) {
+    //     alert(error.message);
+    //   }
+    // };
 
-  // const handleClickedUp= ()=>{
-  //   setthumbUp(!thumbUp);
-  //   if(setthumbDown(true)){
-  //     setthumbDown(false)
-  //   }
-  // }
+    // fetchData();
 
-  // const handleClickedDown= ()=>{
-  //   setthumbDown(!thumbDown);
-  //   if(setthumbUp(true)){
-  //     setthumbUp(false);
-  //   }
+    //REALTIME UPDATES
+    const unsub = onSnapshot(
+      collection(db, "users_vote"),
+      (snapShot) => {
+        let list = [];
+        snapShot.docs.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setData(list);
+      },
+      (error) => {
+        alert(error.message);
+      }
+    );
 
-  // }
+    return () => {
+      unsub();
+    };
+  }, []);
+
+  //console.log(data);
+
+  const handleLike = (item) => {
+    const isLike = doc(db, "users_vote", item.id);
+
+    getDoc(doc(db, "users_vote",  item.id))
+    .then((docSnap) => {
+      if (docSnap.exists()) {
+        var liking = docSnap.data().like + 1;
+
+        updateDoc(isLike, {
+          like: liking,
+        })
+          .then(() => {
+           
+          })
+          .catch((error) => alert(error.message));
+      }
+    })
+    .catch((error) => alert(error.message));
+  };
+
+  const handleUnlike = (item) => {
+    const isUnLike = doc(db, "users_vote", item.id);
+
+    getDoc(doc(db, "users_vote",  item.id))
+    .then((docSnap) => {
+      if (docSnap.exists()) {
+        var unliking = docSnap.data().unlike + 1;
+
+        updateDoc(isUnLike, {
+          unlike: unliking,
+        })
+          .then(() => {
+            
+          })
+          .catch((error) => alert(error.message));
+      }
+    })
+    .catch((error) => alert(error.message));
+    
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -72,55 +139,54 @@ const SeeVote = () => {
           </ImageBackground>
         </View>
 
-        <View style={styles.mainConatainer}>
-          <View style={styles.box}>
-            <Text style={styles.voteTitle}>Vote Title</Text>
-            <View>
-              <Text style={styles.allText}>
-                Lionel Andrés Messi, also known as Leo Messi, is an Argentine
-                professional footballer who plays as a forward for Ligue 1 club
-                Paris Saint-Germain and captains the Argentina national team.
-              </Text>
-            </View>
-            <View style={styles.mainBg}>
-              <View style={styles.voteDecision}>
-                {/*<TouchableOpacity style={{paddingRight: 10, flexDirection: "row", alignItems:"center",}} onPress={handleClickedUp}>
-                  {thumbUp?<MaterialIcons size={34} color="#479cd5" name="thumb-up-off-alt"/>:<MaterialIcons size={34} color="#479cd5" name="thumb-up-alt"/>}
-                  <Text style={styles.voteNum}>9</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={{flexDirection: "row", alignItems:"center"}} onPress={handleClickedDown}>
-                  {thumbDown?<MaterialIcons size={34} color="red" name="thumb-down-off-alt" />:<MaterialIcons size={34} color="red" name="thumb-down-alt" />}
-                  <Text style={styles.voteNum}>20</Text>
-                </TouchableOpacity>*/}
+        {data.map((item, index) => {
+          
 
-                <TouchableOpacity
-                  style={{
-                    paddingRight: 10,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                  onPress={() => {}}
-                >
-                  <MaterialIcons
-                    size={34}
-                    color="#479cd5"
-                    name="thumb-up-alt"
-                  />
-                  <Text style={styles.voteNum}>9</Text>
-                </TouchableOpacity>
+          return (
+            
+            <View key={item.id} style={styles.mainConatainer}>
+              <View style={styles.box}>
+                <Text style={styles.voteTitle}>{item.vote_title}</Text>
+                <View>
+                  <Text style={styles.allText}>{item.vote_message}</Text>
+                </View>
+                <View style={styles.mainBg}>
+                  <View style={styles.voteDecision}>
+                    <TouchableOpacity
+                      style={{
+                        paddingRight: 10,
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                      onPress={() => handleLike(item)}
+                    >
+                      <MaterialIcons
+                        size={34}
+                        color="#479cd5"
+                        name="thumb-up-alt"
+                      />
+                      <Text style={styles.voteNum}>{item.like}</Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "center" }}
-                  onPress={() => {}}
-                >
-                  <MaterialIcons size={34} color="red" name="thumb-down-alt" />
-                  <Text style={styles.voteNum}>20</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                      onPress={() => handleUnlike(item)}
+                    >
+                      <MaterialIcons
+                        size={34}
+                        color="red"
+                        name="thumb-down-alt"
+                      />
+                      <Text style={styles.voteNum}>{item.unlike}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
             </View>
-          </View>
-        </View>
+          );
+        })}
 
+        {data.map(() => {})}
       </ScrollView>
     </SafeAreaView>
   );
@@ -139,7 +205,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingTop: 5,
     flex: 1,
-    
   },
   box: {
     width: "100%",
@@ -199,7 +264,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-Bold",
     color: "white",
     fontSize: 18,
-    marginTop: 2
+    marginTop: 2,
   },
   battleText: {
     fontSize: 40,
