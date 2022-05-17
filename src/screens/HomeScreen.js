@@ -23,7 +23,7 @@ const HomeScreen = (props) => {
       <StatusBar />
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <Header />
-        
+
         <View style={styles.heroSection}>
           <ImageBackground
             source={image}
@@ -47,6 +47,45 @@ const HomeScreen = (props) => {
         </View>
 
         <ListOption {...props} />
+
+        <View style={styles.createVote}>
+          <View style={styles.booking}>
+            <View>
+              <Text
+                style={{
+                  fontFamily: "Poppins-Bold",
+                  fontSize: 20,
+                  color: "#1aac96",
+                }}
+              >
+                Guess What?
+              </Text>
+              <Text
+                style={{
+                  lineHeight: 20,
+                  fontFamily: "Poppins-Regular",
+                  color: "grey",
+                }}
+              >
+                You can now create votes!
+              </Text>
+            </View>
+            <TouchableOpacity activeOpacity={0.6} onPress={()=>props.navigation.navigate("CreateVote")}>
+              <View
+                style={{
+                  backgroundColor: "#FDC04A",
+                  paddingHorizontal: 25,
+                  paddingVertical: 17,
+                  borderRadius: 10,
+                }}
+              >
+                <Text style={{ fontFamily: "Poppins-Regular", color: "white" }}>
+                  Here
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -103,5 +142,16 @@ const styles = StyleSheet.create({
     color: "#0782F9",
     fontSize: 24,
     textAlign: "center",
+  },
+  booking: {
+    height: 82,
+    backgroundColor: "#f6f6f6",
+    marginVertical: 16,
+    width: "100%",
+    borderRadius: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
 });
