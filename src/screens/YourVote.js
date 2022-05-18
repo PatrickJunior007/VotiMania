@@ -11,7 +11,7 @@ import {
   Button,
   TouchableOpacity,
   ImageBackground,
-  Alert
+  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -24,14 +24,14 @@ import {
   updateDoc,
   getDocs,
   deleteDoc,
-  onSnapshot
+  onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { auth } from "../../firebase";
 
 const YourVote = (props) => {
   const [data, setData] = useState([]);
-  const userID= auth.currentUser?.uid;
+  const userID = auth.currentUser?.uid;
 
   useEffect(() => {
     // const fetchData = async () => {
@@ -46,7 +46,6 @@ const YourVote = (props) => {
     //         list.push({id: doc.id, ...doc.data()});
     //       }
 
-          
     //     });
     //     setData(list);
     //   } catch (error) {
@@ -56,52 +55,48 @@ const YourVote = (props) => {
 
     // fetchData();
 
-
     //REALTIME UPDATES
-    const unsub = onSnapshot(collection(db, "users_vote"), (snapShot)=>{
-      let list = [];
-      snapShot.docs.forEach((doc) => {
-        list.push({ id: doc.id, ...doc.data() });      
-      });
-      setData(list);
-    }, (error)=>{
-      alert(error.message);
-    });
+    const unsub = onSnapshot(
+      collection(db, "users_vote"),
+      (snapShot) => {
+        let list = [];
+        snapShot.docs.forEach((doc) => {
+          if(doc.data().userId == userID){
+            list.push({ id: doc.id, ...doc.data() });
+          }
+          
+        });
+        setData(list);
+      },
+      (error) => {
+        alert(error.message);
+      }
+    );
 
-    return ()=>{
+    return () => {
       unsub();
-    }
-    
+    };
   }, []);
 
-  
-
-  
-  const deletePost = async(item) => {
+  const deletePost = async (item) => {
     //console.log(item.id);
-    Alert.alert(
-      "Delete Vote",
-      "Are you sure you want to delete this vote?",
-      [
-        {
-          text: "Yes",
-          onPress: async() => {
-            await deleteDoc(doc(db, "users_vote", item.id))
+    Alert.alert("Delete Vote", "Are you sure you want to delete this vote?", [
+      {
+        text: "Yes",
+        onPress: async () => {
+          await deleteDoc(doc(db, "users_vote", item.id))
             .then(() => {
               Alert.alert("Vote Deleted", "Sucessfully deleted your vote");
-              setData(data.filter((content)=>content.id !== item.id))
+              setData(data.filter((content) => content.id !== item.id));
             })
-            .catch((error) => alert(error.message)); 
-          },
+            .catch((error) => alert(error.message));
         },
-        {
-          text: "no",
-        },
-      ]
-    );
-  }
-
-  
+      },
+      {
+        text: "no",
+      },
+    ]);
+  };
 
   //console.log(data);
 
@@ -110,7 +105,7 @@ const YourVote = (props) => {
       <StatusBar />
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <Header />
-        <View style={{paddingTop: 20}}>
+        <View style={{ paddingTop: 20 }}>
           {data.map((item, index) => (
             <View key={item.id} style={styles.mainConatainer}>
               <View style={styles.box}>
@@ -130,6 +125,7 @@ const YourVote = (props) => {
                   <Text style={styles.allText}>{item.vote_message}</Text>
                 </View>
                 <View style={styles.mainBg}>
+                  <Text style={styles.decision}>Decision: </Text>
                   <View style={styles.voteDecision}>
                     <View
                       style={{
@@ -200,15 +196,16 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   mainBg: {
-    display: "flex",
+    flexDirection: "row",
     width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   voteDecision: {
-    width: "100%",
     flexDirection: "row",
     margin: 4,
     justifyContent: "flex-end",
-    paddingRight: 20,
+    paddingRight: 5,
   },
   voteNum: {
     fontFamily: "Poppins-Bold",
@@ -217,4 +214,11 @@ const styles = StyleSheet.create({
     marginTop: 7,
     paddingHorizontal: 2.2,
   },
+  decision:{
+    fontFamily: "DM-Medium",
+    lineHeight: 19,
+    color: "grey",
+    marginTop: 7,
+    fontSize: 15.5
+  }
 });

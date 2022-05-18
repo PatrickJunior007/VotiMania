@@ -17,6 +17,7 @@ import DrawerNavig from "./navigator/DrawerNavig";
 const customFonts = {
   "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+  "DM-Medium": require("./assets/fonts/DMSans-Bold.ttf"),
 }
 
 //Creating stack navigation
