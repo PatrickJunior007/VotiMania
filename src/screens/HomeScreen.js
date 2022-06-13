@@ -20,7 +20,7 @@ import ListOption from "../../components/ListOption";
 const HomeScreen = (props) => {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar />
+      <StatusBar backgroundColor="white" barStyle="dark-content" />
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <Header />
 

@@ -30,6 +30,7 @@ export default function App() {
   if (isLoaded) {
     return (
       <View style={styles.container}>
+        
         <NavigationContainer>
           <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="SignIn" component={SignIn}/>

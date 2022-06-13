@@ -102,7 +102,7 @@ const YourVote = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar />
+      <StatusBar backgroundColor="white" barStyle="dark-content" />
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <Header />
         <View style={{ paddingTop: 20 }}>
@@ -184,6 +184,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: {width:0, height:2},
+    shadowOpacity: 0.25
   },
   voteTitle: {
     fontFamily: "Poppins-Bold",

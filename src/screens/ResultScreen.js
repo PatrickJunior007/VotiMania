@@ -176,7 +176,7 @@ const ResultScreen = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar />
+      <StatusBar backgroundColor="white" barStyle="dark-content" />
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <Header />
 
@@ -295,6 +295,9 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 15,
     marginLeft: 2,
+    shadowColor: '#000',
+    shadowOffset: {width:0, height:2},
+    shadowOpacity: 0.25
   },
   cardImage: {
     height: 150,

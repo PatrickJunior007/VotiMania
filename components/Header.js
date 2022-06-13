@@ -14,6 +14,7 @@ const Header = (props) => {
   return (
 
     <View style={styles.headerContainer}>
+      
       <View>
         <View>
           <TouchableOpacity style={{}} onPress={()=>{nav()}}>
@@ -38,7 +39,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#f6f6f6',
     alignItems: 'center',
-    elevation: 5
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {width:0, height:2},
+    shadowOpacity: 0.1
   },
   logo:{
     width: '100%',
