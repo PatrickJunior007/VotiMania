@@ -40,7 +40,9 @@ const CreateVote = (props) => {
       vote_title: voteTitle,
       vote_message: voteMessage,
       like: 0,
-      unlike: 0
+      unlike: 0,
+      votedUp: [1],
+      votedDown: [1]
     }).then(()=>{
 
       Alert.alert(
@@ -71,8 +73,9 @@ const CreateVote = (props) => {
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      
       <SafeAreaView style={styles.container}>
-        <StatusBar />
+        <StatusBar backgroundColor="white" barStyle="dark-content" />
         <ScrollView style={{ flex: 1, width: "100%" }}>
           <Header />
           <View style={styles.mainContainer}>

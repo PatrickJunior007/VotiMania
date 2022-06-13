@@ -51,6 +51,9 @@ const styles = StyleSheet.create({
     margin: 7,
     padding: 10,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: {width:0, height:2},
+    shadowOpacity: 0.25
     
   },
   cardImage:{

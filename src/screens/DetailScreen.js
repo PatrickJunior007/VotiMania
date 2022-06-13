@@ -166,7 +166,7 @@ const DetailScreen = (props) => {
 
   return (
     <SafeAreaView style={{ flex: 1, width: "100%", backgroundColor: "white" }}>
-      <StatusBar translucent={false} />
+      <StatusBar backgroundColor="white" barStyle="dark-content" />
       <ScrollView>
         <View style={styles.backgroundImageContainer}>
           <ImageBackground
@@ -370,6 +370,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: 350,
     borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: {width:0, height:2},
+    shadowOpacity: 0.25
   },
   imageContainer: {
     width: "100%",
@@ -399,6 +402,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: -30,
     elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: {width:0, height:2},
+    shadowOpacity: 0.25
   },
   btnRating: {
     height: 30,
@@ -421,7 +427,10 @@ const styles = StyleSheet.create({
     marginRight: 12,
     marginVertical: 15,
     borderRadius: 20,
-    marginBottom: 30
+    marginBottom: 30,
+    shadowColor: '#000',
+    shadowOffset: {width:0, height:2},
+    shadowOpacity: 0.25
   },
   cardImg: {
     width: "100%",

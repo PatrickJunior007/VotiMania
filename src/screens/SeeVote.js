@@ -1,3 +1,4 @@
+//Part 2
 import {
   StyleSheet,
   Text,
@@ -27,6 +28,8 @@ import {
   updateDoc,
   getDocs,
   onSnapshot,
+  arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { auth } from "../../firebase";
@@ -34,27 +37,281 @@ import { auth } from "../../firebase";
 const SeeVote = () => {
   const [data, setData] = useState([]);
 
+  const [thumbUp, setthumbUp] = useState(false);
+  const [thumbDown, setthumbDown] = useState(false);
+
+  const userID = auth.currentUser?.uid;
+
+  const handleLike = (item) => {
+    const isLike = doc(db, "users_vote", item.id);
+    getDoc(doc(db, "users_vote", item.id))
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const checkDown = docSnap.data().votedDown.includes(userID);
+          const checkUp = docSnap.data().votedUp.includes(userID);
+          if (checkUp == checkDown) {
+            //Check if the user has voted and remove its data
+            if (checkUp) {
+              updateDoc(isLike, {
+                votedUp: arrayRemove(userID),
+              })
+                .then(() => {
+                  
+                    var liking = docSnap.data().like - 1;
+                    if (docSnap.data().like <= 0) {
+                      updateDoc(isLike, {
+                        like: 0,
+                      });
+                    } else {
+                      updateDoc(isLike, {
+                        like: liking,
+                      });
+                    }
+                 
+                })
+              .catch((error) => alert(error.message));
+            } else {
+              //if the user hasn't voted add his data
+              if(checkDown){
+                updateDoc(isLike, {
+                  votedDown: arrayRemove(userID),
+                })
+                  .then(() => {
+                    if (checkUp == checkDown) {
+                      if (docSnap.data().unlike <= 0) {
+                        updateDoc(isLike, {
+                          unlike: 0,
+                        });
+                      } else {
+                        var unliking = docSnap.data().unlike - 1;
+                        updateDoc(isLike, {
+                          unlike: unliking,
+                        });
+                      }
+                    }
+                  })
+                  .catch((error) => alert(error.message));
+              }
+
+
+              updateDoc(isLike, {
+                votedUp: arrayUnion(userID),
+              })
+                .then(() => {
+                  if (checkUp == checkDown) {
+                    var liking = docSnap.data().like + 1;
+                    updateDoc(isLike, {
+                      like: liking,
+                    });
+                  }
+                })
+                .catch((error) => alert(error.message));
+            }
+          } else {
+            //Check if the user has voted and remove its data
+            if (checkUp) {
+              updateDoc(isLike, {
+                votedUp: arrayRemove(userID),
+              })
+                .then(() => {
+                  
+                    var liking = docSnap.data().like - 1;
+                    if (docSnap.data().like <= 0) {
+                      updateDoc(isLike, {
+                        like: 0,
+                      });
+                    } else {
+                      updateDoc(isLike, {
+                        like: liking,
+                      });
+                    }
+                 
+                })
+              .catch((error) => alert(error.message));
+            } else {
+              if(checkDown){
+                updateDoc(isLike, {
+                  votedDown: arrayRemove(userID),
+                })
+                  .then(() => {
+                    if (checkUp !== checkDown) {
+                      var unliking = docSnap.data().unlike - 1;
+                      if (docSnap.data().unlike <= 0) {
+                        updateDoc(isLike, {
+                          unlike: 0,
+                        });
+                      } else {
+                        updateDoc(isLike, {
+                          unlike: unliking,
+                        });
+                      }
+                    }
+                  })
+                  .catch((error) => alert(error.message));
+              }
+
+
+              updateDoc(isLike, {
+                votedUp: arrayUnion(userID),
+              })
+                .then(() => {
+                  if (checkUp !== checkDown) {
+                    var liking = docSnap.data().like + 1;
+                    updateDoc(isLike, {
+                      like: liking,
+                    });
+                  }
+                })
+                .catch((error) => alert(error.message));
+            }
+          }
+        }
+      })
+      .catch((error) => alert(error.message));
+  };
+
+
+
+  //For the Unlike Check
+  const handleUnlike = (item) => {
+   
+    const isLike = doc(db, "users_vote", item.id);
+    getDoc(doc(db, "users_vote", item.id))
+      .then((docSnap) => {
+        if (docSnap.exists()) {
+          const checkDown = docSnap.data().votedDown.includes(userID);
+          const checkUp = docSnap.data().votedUp.includes(userID);
+          if (checkDown == checkUp) {
+            //Check if the user has voted and remove its data
+            if (checkDown) {
+              updateDoc(isLike, {
+                votedDown: arrayRemove(userID),
+              })
+                .then(() => {
+                  
+                    if (docSnap.data().unlike <= 0) {
+                      updateDoc(isLike, {
+                        unlike: 0,
+                      });
+                    } else {
+                      var unliking = docSnap.data().unlike - 1;
+                      updateDoc(isLike, {
+                        unlike: unliking,
+                      });
+                    }
+                 
+                })
+                .catch((error) => alert(error.message));
+            } else {
+              //if the user hasn't voted add his data
+              if(checkUp){
+                updateDoc(isLike, {
+                  votedUp: arrayRemove(userID),
+                })
+                  .then(() => {
+                    if (checkDown == checkUp) {
+                      var liking = docSnap.data().like - 1;
+                      if (docSnap.data().like <= 0) {
+                        updateDoc(isLike, {
+                          like: 0,
+                        });
+                      } else {
+                        updateDoc(isLike, {
+                          like: liking,
+                        });
+                      }
+                    }
+                  })
+                .catch((error) => alert(error.message));
+              }
+
+
+              updateDoc(isLike, {
+                votedDown: arrayUnion(userID),
+              })
+                .then(() => {
+                  if (checkDown == checkUp) {
+                    var unliking = docSnap.data().unlike + 1;
+                    updateDoc(isLike, {
+                      unlike: unliking,
+                    });
+                  }
+                })
+              .catch((error) => alert(error.message));
+
+
+
+            }
+          } else {
+            
+
+
+            //Check if the user has voted and remove its data
+            if (checkDown) {
+              updateDoc(isLike, {
+                votedDown: arrayRemove(userID),
+              })
+                .then(() => {
+                  
+                    if (docSnap.data().unlike <= 0) {
+                      updateDoc(isLike, {
+                        unlike: 0,
+                      });
+                    } else {
+                      var unliking = docSnap.data().unlike - 1;
+                      updateDoc(isLike, {
+                        unlike: unliking,
+                      });
+                    }
+                 
+                })
+                .catch((error) => alert(error.message));
+            } else {
+              //if the user hasn't voted add his data
+              if(checkUp){
+                updateDoc(isLike, {
+                  votedUp: arrayRemove(userID),
+                })
+                  .then(() => {
+                    if (checkDown !== checkUp) {
+                      var liking = docSnap.data().like - 1;
+                      if (docSnap.data().like <= 0) {
+                        updateDoc(isLike, {
+                          like: 0,
+                        });
+                      } else {
+                        updateDoc(isLike, {
+                          like: liking,
+                        });
+                      }
+                    }
+                  })
+                .catch((error) => alert(error.message));
+              }
+
+
+              updateDoc(isLike, {
+                votedDown: arrayUnion(userID),
+              })
+                .then(() => {
+                  if (checkDown !== checkUp) {
+                    var unliking = docSnap.data().unlike + 1;
+                    updateDoc(isLike, {
+                      unlike: unliking,
+                    });
+                  }
+                })
+              .catch((error) => alert(error.message));
+            }
+          }
+        }
+      })
+      .catch((error) => alert(error.message));
+  };
+
   //Prototype
-  
 
   useEffect(() => {
-    // const fetchData = async () => {
-    //   let list = [];
-    //   try {
-    //     const querySnapshot = await getDocs(collection(db, "users_vote"));
-    //     querySnapshot.forEach((doc) => {
-    //       // doc.data() is never undefined for query doc snapshots
-    //       //console.log(doc.id, " => ", doc.data());
-    //       list.push({ id: doc.id, ...doc.data() });
-
-    //     });
-    //     setData(list);
-    //   } catch (error) {
-    //     alert(error.message);
-    //   }
-    // };
-
-    // fetchData();
 
     //REALTIME UPDATES
     const unsub = onSnapshot(
@@ -76,52 +333,10 @@ const SeeVote = () => {
     };
   }, []);
 
-  //console.log(data);
-
-  const handleLike = (item) => {
-    const isLike = doc(db, "users_vote", item.id);
-
-    getDoc(doc(db, "users_vote",  item.id))
-    .then((docSnap) => {
-      if (docSnap.exists()) {
-        var liking = docSnap.data().like + 1;
-
-        updateDoc(isLike, {
-          like: liking,
-        })
-          .then(() => {
-           
-          })
-          .catch((error) => alert(error.message));
-      }
-    })
-    .catch((error) => alert(error.message));
-  };
-
-  const handleUnlike = (item) => {
-    const isUnLike = doc(db, "users_vote", item.id);
-
-    getDoc(doc(db, "users_vote",  item.id))
-    .then((docSnap) => {
-      if (docSnap.exists()) {
-        var unliking = docSnap.data().unlike + 1;
-
-        updateDoc(isUnLike, {
-          unlike: unliking,
-        })
-          .then(() => {
-            
-          })
-          .catch((error) => alert(error.message));
-      }
-    })
-    .catch((error) => alert(error.message));
-    
-  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar />
+      <StatusBar backgroundColor="white" barStyle="dark-content" />
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <Header />
         <View style={styles.heroSection}>
@@ -140,10 +355,7 @@ const SeeVote = () => {
         </View>
 
         {data.map((item, index) => {
-          
-
           return (
-            
             <View key={item.id} style={styles.mainConatainer}>
               <View style={styles.box}>
                 <Text style={styles.voteTitle}>{item.vote_title}</Text>
@@ -151,6 +363,8 @@ const SeeVote = () => {
                   <Text style={styles.allText}>{item.vote_message}</Text>
                 </View>
                 <View style={styles.mainBg}>
+                  {/* <Text>{""}</Text> */}
+                  <View>{item.votedUp.includes(userID)|| item.votedDown.includes(userID)?<Text style={styles.alreadyVoted}>Voted</Text>:<Text></Text>}</View>
                   <View style={styles.voteDecision}>
                     <TouchableOpacity
                       style={{
@@ -160,11 +374,19 @@ const SeeVote = () => {
                       }}
                       onPress={() => handleLike(item)}
                     >
-                      <MaterialIcons
-                        size={34}
-                        color="#479cd5"
-                        name="thumb-up-alt"
-                      />
+                      {item.votedUp.includes(userID) ? (
+                        <MaterialIcons
+                          size={34}
+                          color="#479cd5"
+                          name="thumb-up-alt"
+                        />
+                      ) : (
+                        <MaterialIcons
+                          size={34}
+                          color="#479cd5"
+                          name="thumb-up-off-alt"
+                        />
+                      )}
                       <Text style={styles.voteNum}>{item.like}</Text>
                     </TouchableOpacity>
 
@@ -172,11 +394,19 @@ const SeeVote = () => {
                       style={{ flexDirection: "row", alignItems: "center" }}
                       onPress={() => handleUnlike(item)}
                     >
-                      <MaterialIcons
-                        size={34}
-                        color="red"
-                        name="thumb-down-alt"
-                      />
+                      {item.votedDown.includes(userID) ? (
+                        <MaterialIcons
+                          size={34}
+                          color="red"
+                          name="thumb-down-alt"
+                        />
+                      ) : (
+                        <MaterialIcons
+                          size={34}
+                          color="red"
+                          name="thumb-down-off-alt"
+                        />
+                      )}
                       <Text style={styles.voteNum}>{item.unlike}</Text>
                     </TouchableOpacity>
                   </View>
@@ -186,7 +416,7 @@ const SeeVote = () => {
           );
         })}
 
-        {data.map(() => {})}
+        
       </ScrollView>
     </SafeAreaView>
   );
@@ -213,6 +443,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: {width:0, height:2},
+    shadowOpacity: 0.25
   },
   voteTitle: {
     fontFamily: "Poppins-Bold",
@@ -225,15 +458,16 @@ const styles = StyleSheet.create({
     marginTop: 7,
   },
   mainBg: {
-    display: "flex",
+    flexDirection: "row",
     width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   voteDecision: {
-    width: "100%",
     flexDirection: "row",
     margin: 4,
     justifyContent: "flex-end",
-    paddingRight: 20,
+    paddingRight: 5,
   },
   voteNum: {
     fontFamily: "Poppins-Bold",
@@ -271,4 +505,9 @@ const styles = StyleSheet.create({
     marginBottom: -15,
     color: "#4db5ff",
   },
+  alreadyVoted:{
+    color: "#009a3d",
+    fontFamily: "DM-Medium",
+    fontSize: 16
+  }
 });
