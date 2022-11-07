@@ -12,12 +12,31 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import image from "../../assets/images/football.jpg";
 import ListOption from "../../components/ListOption";
+import { AuthContext } from "../context/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = (props) => {
+  const { currentUser, login, register } = useContext(AuthContext);
+  const [isUser, setIsUser] = useState([]);
+
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     try {
+  //       const value = await AsyncStorage.getItem('current_user')
+  //       return value != null ? setIsUser(JSON.parse(value)) : null;
+  //     } catch(e) {
+  //       // error reading value
+  //     }
+  //   }
+  //   getData();
+  //   console.log(isUser.email);
+  // }, [])
+
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="white" barStyle="dark-content" />
@@ -35,6 +54,7 @@ const HomeScreen = (props) => {
                 Battle <Text style={{ color: "#009a3d" }}>For</Text>{" "}
               </Text>
               <Text style={styles.text}>The Greatest Of All Time 🐐 </Text>
+              
             </View>
           </ImageBackground>
         </View>
@@ -42,7 +62,8 @@ const HomeScreen = (props) => {
         <View>
           <View style={styles.textSection}>
             <Text style={styles.h5}>Choose Wisely 🌟</Text>
-            <Text style={styles.h2}>Your Candidates</Text>
+            <Text style={styles.h2}>Your Candidates </Text>
+            {/* {isUser !== null ? <Text>not empty </Text> : <Text>empty</Text>} */}
           </View>
         </View>
 
@@ -70,7 +91,10 @@ const HomeScreen = (props) => {
                 You can now create votes!
               </Text>
             </View>
-            <TouchableOpacity activeOpacity={0.6} onPress={()=>props.navigation.navigate("CreateVote")}>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={() => props.navigation.navigate("CreateVote")}
+            >
               <View
                 style={{
                   backgroundColor: "#FDC04A",

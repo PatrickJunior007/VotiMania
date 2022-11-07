@@ -105,7 +105,8 @@ const YourVote = (props) => {
       <StatusBar backgroundColor="white" barStyle="dark-content" />
       <ScrollView style={{ flex: 1, width: "100%" }}>
         <Header />
-        <View style={{ paddingTop: 20 }}>
+        <View style={{ paddingTop: 1}}>
+          {data.length === 0 ? <Text style={styles.NoData}>You haven't created any vote yet</Text> : <Text>{""}</Text> }
           {data.map((item, index) => (
             <View key={item.id} style={styles.mainConatainer}>
               <View style={styles.box}>
@@ -223,5 +224,10 @@ const styles = StyleSheet.create({
     color: "grey",
     marginTop: 7,
     fontSize: 15.5
+  },
+  NoData:{
+    textAlign: "center",
+    fontFamily: "Poppins-Regular",
+    paddingTop: 20
   }
 });

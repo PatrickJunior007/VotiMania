@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
@@ -14,15 +14,19 @@ import {
 } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import { useNavigation } from "@react-navigation/native";
+
+
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import { AuthContext } from "../src/context/AuthContext";
 
 const DrawerContain = (props) => {
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        props.navigation.replace("SignIn");
-      })
-      .catch((error) => alert(error.message));
+
+  const navigation = useNavigation();
+  const {isUser, logout} = useContext(AuthContext);
+
+  const handleSignOut = (props) => {
+    logout(auth);
   };
 
   const toggleTheme = () => {
