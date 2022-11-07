@@ -12,7 +12,8 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -25,16 +26,21 @@ const SignIn = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        const uid = user.uid;
-        props.navigation.replace("HomeScreen");
-      }
-    });
+  //Context Function containing login, logout, currentUser and Register
+  const {currentUser, login, register, setCurrentUser} = useContext(AuthContext)
+  
 
-    return unsubscribe;
-  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       setCurrentUser(user);
+  //       const uid = user.uid;
+  //       console.log("itb " + currentUser);
+  //     }
+  //   });
+
+  //   return unsubscribe;
+  // }, []);
 
   //Alert for signup
   const createTwoButtonAlert = () => {
@@ -52,27 +58,11 @@ const SignIn = (props) => {
 
   //Firebase SignUp
   const handleSignUp = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        //console.log(user.email);
-        createTwoButtonAlert();
-      })
-      .catch((error) => alert(error.message));
+    register(auth, email, password, createTwoButtonAlert);
   };
 
   const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        Alert.alert("Welcome back to VotiMania", "Welcome " + user.email, [
-          {
-            text: "Okay",
-            style: "destructive",
-          },
-        ]);
-      })
-      .catch((error) => alert(error.message));
+    login(auth, email, password)
   };
 
   return (
@@ -80,7 +70,7 @@ const SignIn = (props) => {
       <SafeAreaView style={styles.container}>
         <StatusBar backgroundColor="white" barStyle="dark-content" />
 
-        <ScrollView contentContainerStyle={{flex: 1,  alignItems: "center", justifyContent: "center"}} style={{ width: "100%", }}>
+        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{flex: 1,  alignItems: "center", justifyContent: "center"}} style={{ width: "100%", }}>
           
           <View style={styles.imgBg}>
             <Image
@@ -90,6 +80,7 @@ const SignIn = (props) => {
           </View>
 
           <View style={styles.inputContainer}>
+          {/* <Text>{currentUser.email}</Text> */}
             <TextInput
               placeholder="Email"
               value={email}

@@ -76,7 +76,7 @@ const CreateVote = (props) => {
       
       <SafeAreaView style={styles.container}>
         <StatusBar backgroundColor="white" barStyle="dark-content" />
-        <ScrollView style={{ flex: 1, width: "100%" }}>
+        <ScrollView keyboardShouldPersistTaps="handled" style={{ flex: 1, width: "100%" }}>
           <Header />
           <View style={styles.mainContainer}>
             <Text style={styles.h2}>Create Your Vote </Text>

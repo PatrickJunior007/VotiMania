@@ -36,14 +36,6 @@ const DetailScreen = (props) => {
     props.navigation.goBack();
   };
 
-
-
-  
-
-
-
-
-
   const [initialImage, setinitialImage] = useState(props.route.params.image);
 
   //Button State to check if the user has already sign in
@@ -63,9 +55,6 @@ const DetailScreen = (props) => {
       //console.log(auth.currentUser?.uid);
 
       const userID= auth.currentUser?.uid;
-
-      
-
       // Add a new document in collection "cities"
       if(playerName == "C. Ronaldo"){
         setDoc(doc(db, "football", userID), {
